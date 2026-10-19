@@ -2,7 +2,8 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<!-- Убрали user-scalable=no, чтобы клавиатура открывалась нормально -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KRAFT UTÓK — магазин одежды</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
@@ -195,9 +196,6 @@
     grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
-  @media (min-width: 600px) {
-    .products-grid { grid-template-columns: repeat(3, 1fr); }
-  }
 
   .product-card {
     background: var(--card);
@@ -206,10 +204,6 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-  .product-card:active {
-    transform: scale(0.98);
   }
   
   .product-img {
@@ -340,10 +334,6 @@
   .modal-overlay.show .modal {
     transform: translateY(0);
   }
-  @media (min-width: 600px) {
-    .modal-overlay { align-items: center; }
-    .modal { border-radius: 20px; border: 1px solid var(--primary); }
-  }
 
   .close-btn {
     position: absolute;
@@ -354,6 +344,7 @@
     color: var(--text-muted);
     font-size: 24px;
     cursor: pointer;
+    z-index: 10;
   }
 
   .modal h2 {
@@ -374,6 +365,7 @@
   .cart-item-info h4 { font-size: 14px; font-weight: 700; }
   .cart-item-info p { font-size: 12px; color: var(--text-muted); }
   .cart-item-price { font-size: 14px; font-weight: 700; color: var(--primary); }
+  
   .cart-total {
     display: flex;
     justify-content: space-between;
@@ -400,7 +392,7 @@
   .btn-primary:active { background: var(--primary-hover); }
 
   /* Форма */
-  .form-group { margin-bottom: 15px; }
+  .form-group { margin-bottom: 15px; position: relative; z-index: 10; }
   .form-group label {
     display: block;
     font-size: 11px;
@@ -417,7 +409,7 @@
     padding: 14px;
     border-radius: 10px;
     font-family: inherit;
-    font-size: 14px;
+    font-size: 16px; /* 16px важно для мобильных устройств, чтобы не было зума */
     outline: none;
     transition: border-color 0.2s;
   }
@@ -571,19 +563,19 @@
       <h2>Оформление заказа</h2>
       <div class="form-group">
         <label>ФИО *</label>
-        <input type="text" id="nameInput" placeholder="Иван Иванов">
+        <input type="text" id="nameInput" placeholder="Иван Иванов" autocomplete="name">
       </div>
       <div class="form-group">
         <label>Телефон *</label>
-        <input type="tel" id="phoneInput" placeholder="+7 999 000-00-00">
+        <input type="tel" id="phoneInput" placeholder="+7 999 000-00-00" autocomplete="tel">
       </div>
       <div class="form-group">
         <label>Город *</label>
-        <input type="text" id="cityInput" placeholder="Москва">
+        <input type="text" id="cityInput" placeholder="Москва" autocomplete="address-level2">
       </div>
       <div class="form-group">
         <label>Адрес (улица, дом, кв) *</label>
-        <input type="text" id="addressInput" placeholder="ул. Ленина, д. 5, кв. 10">
+        <input type="text" id="addressInput" placeholder="ул. Ленина, д. 5, кв. 10" autocomplete="street-address">
       </div>
       <button class="btn-primary" onclick="submitOrder()">Отправить заказ</button>
     </div>
@@ -616,9 +608,8 @@
     { id: 8, category: 'shoes', name: 'Ботинки Worker', price: 7990, desc: 'Рабочие, на толстой подошве', img: 'https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=600&q=80', sizes: ['40', '41', '42', '43', '44', '45'], badge: '' }
   ];
 
-  // ===== СОСТОЯНИЕ =====
   let cart = [];
-  let selectedSizes = {}; // Хранит выбранный размер для каждого товара
+  let selectedSizes = {};
 
   // ===== ГЕНЕРАЦИЯ КАТАЛОГА =====
   function renderProducts() {
@@ -650,21 +641,15 @@
     }).join('');
   }
 
-  // ===== ФИЛЬТРАЦИЯ =====
   function filterProducts(category, btn) {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 
     document.querySelectorAll('.product-card').forEach(card => {
-      if (category === 'all' || card.dataset.category === category) {
-        card.style.display = 'flex';
-      } else {
-        card.style.display = 'none';
-      }
+      card.style.display = (category === 'all' || card.dataset.category === category) ? 'flex' : 'none';
     });
   }
 
-  // ===== ВЫБОР РАЗМЕРА =====
   function selectSize(productId, size, btn) {
     selectedSizes[productId] = size;
     const card = btn.closest('.product-card');
@@ -672,34 +657,20 @@
     btn.classList.add('active');
   }
 
-  // ===== ДОБАВЛЕНИЕ В КОРЗИНУ =====
   function addToCart(productId) {
     const product = PRODUCTS.find(p => p.id === productId);
     const size = selectedSizes[productId];
 
-    if (!size) {
-      alert('Пожалуйста, выберите размер!');
-      return;
-    }
+    if (!size) return alert('Пожалуйста, выберите размер!');
 
     const existingItem = cart.find(item => item.id === productId && item.size === size);
-    if (existingItem) {
-      existingItem.qty += 1;
-    } else {
-      cart.push({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        size: size,
-        qty: 1
-      });
-    }
+    if (existingItem) existingItem.qty += 1;
+    else cart.push({ id: product.id, name: product.name, price: product.price, size: size, qty: 1 });
 
     updateCartUI();
     alert('Товар добавлен в корзину!');
   }
 
-  // ===== ОБНОВЛЕНИЕ UI КОРЗИНЫ =====
   function updateCartUI() {
     const count = cart.reduce((sum, item) => sum + item.qty, 0);
     document.getElementById('cartCount').innerText = count;
@@ -729,35 +700,32 @@
     document.getElementById('cartTotal').innerText = total.toLocaleString('ru-RU') + ' ₽';
   }
 
-  // ===== УПРАВЛЕНИЕ МОДАЛКАМИ =====
-  function openCart() {
-    document.getElementById('cartModal').classList.add('show');
-  }
-  function closeModal(id) {
-    document.getElementById(id).classList.remove('show');
-  }
+  function openCart() { document.getElementById('cartModal').classList.add('show'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
   function openCheckout() {
-    if (cart.length === 0) {
-      alert('Корзина пуста!');
-      return;
-    }
+    if (cart.length === 0) return alert('Корзина пуста!');
     closeModal('cartModal');
     document.getElementById('checkoutModal').classList.add('show');
   }
 
-  // ===== ОТПРАВКА ЗАКАЗА =====
+  // ===== ОТПРАВКА =====
   function submitOrder() {
     const name = document.getElementById('nameInput').value.trim();
     const phone = document.getElementById('phoneInput').value.trim();
     const city = document.getElementById('cityInput').value.trim();
     const address = document.getElementById('addressInput').value.trim();
 
-    // Простая валидация
+    // Проверки
     if (name.length < 2) return alert('Введите корректное ФИО');
     if (phone.replace(/\D/g, '').length < 10) return alert('Введите корректный телефон');
     if (city.length < 2) return alert('Введите город');
     if (address.length < 5) return alert('Введите полный адрес');
+
+    // Проверяем, открыто ли внутри Телеграма
+    if (!tg.initData) {
+      return alert('ОШИБКА: Вы открыли сайт не через Telegram. Пожалуйста, закройте это окно и откройте сайт через кнопку "Сайт / Регистрация" в боте @kraftutokBot.');
+    }
 
     const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
@@ -771,31 +739,26 @@
       total: total
     };
 
-    // Отправляем данные в Telegram
-    tg.sendData(JSON.stringify(orderData));
-
-    // Показываем экран успеха
+    // Меняем экран на "Успех" ДО отправки, так как sendData закрывает окно
     document.getElementById('checkoutForm').style.display = 'none';
     document.getElementById('checkoutSuccess').style.display = 'block';
-    
-    // Очищаем корзину
-    cart = [];
-    updateCartUI();
+
+    // Отправляем данные в Телеграм (окно закроется автоматически)
+    setTimeout(() => {
+      tg.sendData(JSON.stringify(orderData));
+    }, 500); 
   }
 
-  // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК =====
   function switchTab(tabId, btn) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    
     document.getElementById('tab-' + tabId).classList.add('active');
     btn.classList.add('active');
   }
 
-  // ===== ИНИЦИАЛИЗАЦИЯ =====
+  // Запуск
   renderProducts();
   updateCartUI();
-
 </script>
 </body>
 </html>
