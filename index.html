@@ -2,7 +2,6 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<!-- Убрали user-scalable=no, чтобы клавиатура открывалась нормально -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KRAFT UTÓK — магазин одежды</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -20,446 +19,106 @@
     --glow: rgba(255, 26, 26, 0.4);
   }
 
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; min-height: 100vh; padding-bottom: 80px; }
 
-  body {
-    font-family: 'Montserrat', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    overflow-x: hidden;
-    min-height: 100vh;
-    padding-bottom: 80px;
-  }
-
-  /* ===== ШАПКА ===== */
-  header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(8, 4, 5, 0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 2px solid var(--border);
-    padding: 14px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .logo {
-    font-size: 20px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  .logo span {
-    color: var(--primary);
-    font-style: italic;
-    font-weight: 300;
-  }
-
-  .cart-btn {
-    position: relative;
-    background: transparent;
-    border: 1px solid var(--primary);
-    color: var(--primary);
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s;
-  }
+  /* ШАПКА */
+  header { position: sticky; top: 0; z-index: 100; background: rgba(8, 4, 5, 0.85); backdrop-filter: blur(12px); border-bottom: 2px solid var(--border); padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; }
+  .logo { font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+  .logo span { color: var(--primary); font-style: italic; font-weight: 300; }
+  .cart-btn { position: relative; background: transparent; border: 1px solid var(--primary); color: var(--primary); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; }
   .cart-btn:active { background: var(--primary); color: #000; }
   .cart-btn svg { width: 20px; height: 20px; fill: currentColor; }
-  
-  .cart-count {
-    position: absolute;
-    top: -4px;
-    right: -4px;
-    background: var(--primary);
-    color: #000;
-    font-size: 11px;
-    font-weight: 900;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid var(--bg);
-  }
+  .cart-count { position: absolute; top: -4px; right: -4px; background: var(--primary); color: #000; font-size: 11px; font-weight: 900; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bg); }
 
-  /* ===== ГЕРОЙ-БЛОК ===== */
-  .hero {
-    padding: 40px 20px;
-    text-align: center;
-    background: linear-gradient(180deg, rgba(255,26,26,0.1) 0%, transparent 100%);
-    border-bottom: 1px solid var(--border);
-  }
-  .hero h1 {
-    font-size: 36px;
-    font-weight: 900;
-    line-height: 1.1;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-  }
+  /* ГЕРОЙ */
+  .hero { padding: 40px 20px; text-align: center; background: linear-gradient(180deg, rgba(255,26,26,0.1) 0%, transparent 100%); border-bottom: 1px solid var(--border); }
+  .hero h1 { font-size: 36px; font-weight: 900; line-height: 1.1; margin-bottom: 10px; text-transform: uppercase; }
   .hero h1 span { color: var(--primary); }
-  .hero p {
-    font-size: 13px;
-    color: var(--text-muted);
-    max-width: 300px;
-    margin: 0 auto;
-    line-height: 1.5;
-  }
+  .hero p { font-size: 13px; color: var(--text-muted); max-width: 300px; margin: 0 auto; line-height: 1.5; }
 
-  /* ===== НАВИГАЦИЯ (ВКЛАДКИ) ===== */
-  .nav-tabs {
-    display: flex;
-    overflow-x: auto;
-    padding: 10px 20px;
-    gap: 8px;
-    border-bottom: 1px solid var(--border);
-    scrollbar-width: none;
-  }
+  /* НАВИГАЦИЯ */
+  .nav-tabs { display: flex; overflow-x: auto; padding: 10px 20px; gap: 8px; border-bottom: 1px solid var(--border); scrollbar-width: none; }
   .nav-tabs::-webkit-scrollbar { display: none; }
-  
-  .tab-btn {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    padding: 8px 16px;
-    border-radius: 100px;
-    font-family: inherit;
-    font-weight: 700;
-    font-size: 12px;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-  .tab-btn.active {
-    background: var(--primary);
-    color: #000;
-    border-color: var(--primary);
-    box-shadow: 0 0 15px var(--glow);
-  }
+  .tab-btn { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 8px 16px; border-radius: 100px; font-family: inherit; font-weight: 700; font-size: 12px; white-space: nowrap; cursor: pointer; transition: all 0.3s; }
+  .tab-btn.active { background: var(--primary); color: #000; border-color: var(--primary); box-shadow: 0 0 15px var(--glow); }
 
-  /* ===== КОНТЕНТ ВКЛАДОК ===== */
-  .tab-content {
-    display: none;
-    padding: 20px;
-    animation: fadeIn 0.4s ease;
-  }
+  /* КОНТЕНТ */
+  .tab-content { display: none; padding: 20px; animation: fadeIn 0.4s ease; }
   .tab-content.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ===== КАТАЛОГ ===== */
-  .filters {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 15px;
-    scrollbar-width: none;
-  }
+  /* КАТАЛОГ */
+  .filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none; }
   .filters::-webkit-scrollbar { display: none; }
-  
-  .filter-btn {
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .filter-btn.active {
-    border-color: var(--primary);
-    color: var(--primary);
-  }
+  .filter-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 8px 16px; border-radius: 8px; font-family: inherit; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; transition: all 0.2s; }
+  .filter-btn.active { border-color: var(--primary); color: var(--primary); }
+  .products-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .product-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+  .product-img { width: 100%; aspect-ratio: 1; position: relative; background: #000; }
+  .product-img img { width: 100%; height: 100%; object-fit: cover; }
+  .badge { position: absolute; top: 8px; left: 8px; background: var(--primary); color: #000; font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 4px; }
+  .product-info { padding: 12px; display: flex; flex-direction: column; flex-grow: 1; }
+  .product-info h3 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .product-info .desc { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; line-height: 1.3; }
+  .sizes { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
+  .size-btn { background: transparent; border: 1px solid var(--border); color: var(--text-muted); width: 28px; height: 28px; border-radius: 6px; font-family: inherit; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .size-btn.active { background: var(--primary); border-color: var(--primary); color: #000; }
+  .product-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+  .price { font-size: 15px; font-weight: 900; color: var(--primary); }
+  .add-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 6px 10px; border-radius: 6px; font-family: inherit; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .add-btn:active { background: var(--primary); color: #000; }
 
-  .products-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
+  /* МОДАЛКИ */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 1000; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+  .modal-overlay.show { opacity: 1; pointer-events: auto; }
+  .modal { background: var(--bg); width: 100%; max-width: 500px; border-radius: 20px 20px 0 0; padding: 24px 20px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1); max-height: 90vh; overflow-y: auto; border-top: 2px solid var(--primary); }
+  .modal-overlay.show .modal { transform: translateY(0); }
+  .close-btn { position: absolute; top: 20px; right: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; z-index: 10; }
+  .modal h2 { font-size: 22px; font-weight: 900; margin-bottom: 20px; text-transform: uppercase; }
 
-  .product-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .product-img {
-    width: 100%;
-    aspect-ratio: 1;
-    position: relative;
-    background: #000;
-  }
-  .product-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .badge {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    background: var(--primary);
-    color: #000;
-    font-size: 10px;
-    font-weight: 900;
-    padding: 2px 8px;
-    border-radius: 4px;
-  }
-
-  .product-info {
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-  }
-  .product-info h3 {
-    font-size: 13px;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-  .product-info .desc {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-bottom: 10px;
-    line-height: 1.3;
-  }
-
-  .sizes {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-  }
-  .size-btn {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .size-btn.active {
-    background: var(--primary);
-    border-color: var(--primary);
-    color: #000;
-  }
-
-  .product-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: auto;
-  }
-  .price {
-    font-size: 15px;
-    font-weight: 900;
-    color: var(--primary);
-  }
-  .add-btn {
-    background: transparent;
-    border: 1px solid var(--primary);
-    color: var(--primary);
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .add-btn:active {
-    background: var(--primary);
-    color: #000;
-  }
-
-  /* ===== МОДАЛЬНЫЕ ОКНА ===== */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(5px);
-    z-index: 1000;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-  }
-  .modal-overlay.show {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .modal {
-    background: var(--bg);
-    width: 100%;
-    max-width: 500px;
-    border-radius: 20px 20px 0 0;
-    padding: 24px 20px;
-    transform: translateY(100%);
-    transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
-    max-height: 90vh;
-    overflow-y: auto;
-    border-top: 2px solid var(--primary);
-  }
-  .modal-overlay.show .modal {
-    transform: translateY(0);
-  }
-
-  .close-btn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 10;
-  }
-
-  .modal h2 {
-    font-size: 22px;
-    font-weight: 900;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-  }
-
-  /* Корзина */
-  .cart-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-  }
+  /* КОРЗИНА */
+  .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
   .cart-item-info h4 { font-size: 14px; font-weight: 700; }
   .cart-item-info p { font-size: 12px; color: var(--text-muted); }
   .cart-item-price { font-size: 14px; font-weight: 700; color: var(--primary); }
-  
-  .cart-total {
-    display: flex;
-    justify-content: space-between;
-    font-size: 18px;
-    font-weight: 900;
-    margin: 20px 0;
-  }
+  .cart-total { display: flex; justify-content: space-between; font-size: 18px; font-weight: 900; margin: 20px 0; }
   .cart-total span { color: var(--primary); }
 
-  .btn-primary {
-    width: 100%;
-    background: var(--primary);
-    color: #000;
-    border: none;
-    padding: 16px;
-    border-radius: 12px;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 900;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
+  .btn-primary { width: 100%; background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 12px; font-family: inherit; font-size: 15px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
   .btn-primary:active { background: var(--primary-hover); }
 
-  /* Форма */
+  /* ФОРМА */
   .form-group { margin-bottom: 15px; position: relative; z-index: 10; }
-  .form-group label {
-    display: block;
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-bottom: 5px;
-    text-transform: uppercase;
-    font-weight: 700;
-  }
-  .form-group input {
-    width: 100%;
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 14px;
-    border-radius: 10px;
-    font-family: inherit;
-    font-size: 16px; /* 16px важно для мобильных устройств, чтобы не было зума */
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .form-group input:focus {
-    border-color: var(--primary);
-  }
+  .form-group label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; font-weight: 700; }
+  .form-group input { width: 100%; background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 14px; border-radius: 10px; font-family: inherit; font-size: 16px; outline: none; transition: border-color 0.2s; }
+  .form-group input:focus { border-color: var(--primary); }
 
-  /* Успех */
-  .success-screen {
-    text-align: center;
-    padding: 20px 0;
-  }
+  /* УСПЕХ И КНОПКИ СВЯЗИ */
+  .success-screen { text-align: center; padding: 20px 0; }
   .success-screen h2 { color: #00c853; font-size: 24px; margin-bottom: 10px; }
   .success-screen p { color: var(--text-muted); font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
   .success-icon { font-size: 60px; margin-bottom: 20px; }
+  
+  .contact-actions { display: flex; flex-direction: column; gap: 10px; }
+  .action-btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; border-radius: 12px; text-decoration: none; font-weight: 800; font-size: 15px; transition: all 0.2s; color: #fff; }
+  .action-btn:active { transform: scale(0.98); }
+  .btn-tg { background: #0088cc; }
+  .btn-vk { background: #0077FF; }
 
-  /* Текстовые страницы */
+  /* ТЕКСТОВЫЕ СТРАНИЦЫ */
   .text-page h2 { font-size: 20px; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; }
   .text-page h3 { font-size: 16px; font-weight: 700; margin: 20px 0 10px; color: var(--primary); }
   .text-page p, .text-page li { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 10px; }
   .text-page ul { padding-left: 20px; }
   .text-page a { color: var(--primary); text-decoration: none; font-weight: 700; }
-
-  .contact-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
-  }
-  .contact-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 16px;
-    border-radius: 12px;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 14px;
-    transition: all 0.3s;
-  }
+  .contact-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+  .contact-btn { display: flex; align-items: center; justify-content: center; gap: 10px; background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 16px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; transition: all 0.3s; }
   .contact-btn:active { background: var(--border); }
 </style>
 </head>
 <body>
 
-<!-- ШАПКА -->
 <header>
   <div class="logo">KRAFT <span>UTÓK</span></div>
   <button class="cart-btn" onclick="openCart()">
@@ -468,13 +127,11 @@
   </button>
 </header>
 
-<!-- ГЕРОЙ -->
 <div class="hero">
   <h1>Одежда и стиль <br><span>из Крыма</span></h1>
   <p>Ограниченные дропы, оверсайз, унисекс. Доставка по РФ.</p>
 </div>
 
-<!-- НАВИГАЦИЯ -->
 <div class="nav-tabs">
   <button class="tab-btn active" onclick="switchTab('catalog', this)">Каталог</button>
   <button class="tab-btn" onclick="switchTab('delivery', this)">Доставка</button>
@@ -482,7 +139,6 @@
   <button class="tab-btn" onclick="switchTab('privacy', this)">Конфиденциальность</button>
 </div>
 
-<!-- ВКЛАДКА: КАТАЛОГ -->
 <div id="tab-catalog" class="tab-content active">
   <div class="filters">
     <button class="filter-btn active" onclick="filterProducts('all', this)">Все</button>
@@ -491,58 +147,51 @@
     <button class="filter-btn" onclick="filterProducts('sweatshirts', this)">👚 Свитшоты</button>
     <button class="filter-btn" onclick="filterProducts('shoes', this)">👟 Обувь</button>
   </div>
-
-  <div class="products-grid" id="productsGrid">
-    <!-- Карточки товаров генерируются через JS -->
-  </div>
+  <div class="products-grid" id="productsGrid"></div>
 </div>
 
-<!-- ВКЛАДКА: ДОСТАВКА -->
 <div id="tab-delivery" class="tab-content">
   <div class="text-page">
     <h2>Доставка и оплата</h2>
     <h3>Способы доставки</h3>
     <p>Мы отправляем заказы по всей России через <b>Почту России</b> и <b>СДЭК</b>.</p>
     <ul>
-      <li>Стоимость доставки рассчитывается индивидуально при подтверждении заказа.</li>
-      <li>Отправка происходит в течение 1-3 рабочих дней после оплаты.</li>
-      <li>После отправки вы получите трек-номер для отслеживания.</li>
+      <li>Стоимость доставки рассчитывается индивидуально.</li>
+      <li>Отправка в течение 1-3 рабочих дней после оплаты.</li>
+      <li>После отправки вы получите трек-номер.</li>
     </ul>
     <h3>Оплата</h3>
-    <p>Оплата производится после подтверждения заказа менеджером (перевод на карту или СБП).</p>
+    <p>Оплата после подтверждения заказа менеджером (перевод на карту или СБП).</p>
   </div>
 </div>
 
-<!-- ВКЛАДКА: КОНТАКТЫ -->
 <div id="tab-contacts" class="tab-content">
   <div class="text-page">
     <h2>Связаться с нами</h2>
     <p>Отвечаем лично, без ботов. Выберите удобный способ:</p>
     <div class="contact-buttons">
       <a href="https://t.me/KRAFT_UTOK" target="_blank" class="contact-btn">✈️ Написать менеджеру</a>
-      <a href="https://vk.com/club241798739" target="_blank" class="contact-btn">💙 ВКонтакте</a>
+      <a href="https://vk.me/club241798739" target="_blank" class="contact-btn">💙 ВКонтакте</a>
       <a href="mailto:orderraftutok@internet.ru" class="contact-btn">✉️ Написать на почту</a>
     </div>
   </div>
 </div>
 
-<!-- ВКЛАДКА: КОНФИДЕНЦИАЛЬНОСТЬ -->
 <div id="tab-privacy" class="tab-content">
   <div class="text-page">
     <h2>Политика конфиденциальности</h2>
     <p>Настоящая Политика описывает, как <b>KRAFT UTÓK</b> собирает и защищает ваши данные.</p>
     <h3>1. Какие данные мы собираем</h3>
-    <p>При оформлении заказа мы запрашиваем: ФИО, номер телефона, город, адрес доставки и Telegram ID.</p>
+    <p>При оформлении заказа мы запрашиваем: ФИО, номер телефона, город, адрес доставки.</p>
     <h3>2. Как мы используем данные</h3>
     <p>Исключительно для доставки вашего заказа и связи с вами.</p>
     <h3>3. Передача третьим лицам</h3>
-    <p>Ваши данные не продаются. Они передаются только логистическим компаниям (Почта, СДЭК) для доставки.</p>
+    <p>Ваши данные не продаются. Передаются только логистическим компаниям (Почта, СДЭК).</p>
     <h3>4. Ваши права</h3>
-    <p>Вы можете запросить удаление ваших данных, написав нам в Telegram.</p>
+    <p>Вы можете запросить удаление данных, написав нам в Telegram.</p>
   </div>
 </div>
 
-<!-- МОДАЛКА: КОРЗИНА -->
 <div class="modal-overlay" id="cartModal">
   <div class="modal">
     <button class="close-btn" onclick="closeModal('cartModal')">×</button>
@@ -553,7 +202,6 @@
   </div>
 </div>
 
-<!-- МОДАЛКА: ОФОРМЛЕНИЕ -->
 <div class="modal-overlay" id="checkoutModal">
   <div class="modal">
     <button class="close-btn" onclick="closeModal('checkoutModal')">×</button>
@@ -563,40 +211,43 @@
       <h2>Оформление заказа</h2>
       <div class="form-group">
         <label>ФИО *</label>
-        <input type="text" id="nameInput" placeholder="Иван Иванов" autocomplete="name">
+        <input type="text" id="nameInput" placeholder="Иван Иванов">
       </div>
       <div class="form-group">
         <label>Телефон *</label>
-        <input type="tel" id="phoneInput" placeholder="+7 999 000-00-00" autocomplete="tel">
+        <input type="tel" id="phoneInput" placeholder="+7 999 000-00-00">
       </div>
       <div class="form-group">
         <label>Город *</label>
-        <input type="text" id="cityInput" placeholder="Москва" autocomplete="address-level2">
+        <input type="text" id="cityInput" placeholder="Москва">
       </div>
       <div class="form-group">
         <label>Адрес (улица, дом, кв) *</label>
-        <input type="text" id="addressInput" placeholder="ул. Ленина, д. 5, кв. 10" autocomplete="street-address">
+        <input type="text" id="addressInput" placeholder="ул. Ленина, д. 5, кв. 10">
       </div>
-      <button class="btn-primary" onclick="submitOrder()">Отправить заказ</button>
+      <button class="btn-primary" onclick="generateOrder()">Сформировать заказ</button>
     </div>
 
-    <!-- Экран успеха -->
+    <!-- Экран с кнопками -->
     <div id="checkoutSuccess" class="success-screen" style="display:none;">
-      <div class="success-icon">✅</div>
-      <h2>Заказ отправлен!</h2>
-      <p>Пожалуйста, вернитесь в Telegram и нажмите кнопку <b>«📱 Подтвердить номер»</b>, чтобы завершить оформление.</p>
+      <div class="success-icon">📝</div>
+      <h2>Заказ сформирован!</h2>
+      <p>Осталось отправить его менеджеру. Нажмите на удобную кнопку ниже, и ваш заказ автоматически откроется в чате (в Telegram текст уже будет вставлен).</p>
+      
+      <div class="contact-actions" id="actionButtons">
+        <a href="#" id="tgActionBtn" class="action-btn btn-tg" target="_blank">✈️ Отправить в Telegram</a>
+        <a href="#" id="vkActionBtn" class="action-btn btn-vk" target="_blank">💙 Отправить ВКонтакте</a>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-  // Инициализация Telegram Web App
   const tg = window.Telegram.WebApp;
   tg.expand();
   tg.setHeaderColor('#080405');
   tg.setBackgroundColor('#080405');
 
-  // ===== ДАННЫЕ ТОВАРОВ =====
   const PRODUCTS = [
     { id: 1, category: 'tshirts', name: 'Футболка Oversize', price: 1990, desc: 'Плотный хлопок 240 г/м²', img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80', sizes: ['S', 'M', 'L', 'XL'], badge: 'ХИТ' },
     { id: 2, category: 'tshirts', name: 'Футболка Classic', price: 1490, desc: '100% хлопок 180 г/м²', img: 'https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=600&q=80', sizes: ['S', 'M', 'L', 'XL', 'XXL'], badge: '' },
@@ -611,16 +262,11 @@
   let cart = [];
   let selectedSizes = {};
 
-  // ===== ГЕНЕРАЦИЯ КАТАЛОГА =====
   function renderProducts() {
     const grid = document.getElementById('productsGrid');
     grid.innerHTML = PRODUCTS.map(p => {
-      const sizeBtns = p.sizes.map(s => 
-        `<button class="size-btn" onclick="selectSize(${p.id}, '${s}', this)">${s}</button>`
-      ).join('');
-      
+      const sizeBtns = p.sizes.map(s => `<button class="size-btn" onclick="selectSize(${p.id}, '${s}', this)">${s}</button>`).join('');
       const badge = p.badge ? `<span class="badge">${p.badge}</span>` : '';
-
       return `
         <div class="product-card" data-category="${p.category}">
           <div class="product-img">
@@ -644,7 +290,6 @@
   function filterProducts(category, btn) {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-
     document.querySelectorAll('.product-card').forEach(card => {
       card.style.display = (category === 'all' || card.dataset.category === category) ? 'flex' : 'none';
     });
@@ -660,7 +305,6 @@
   function addToCart(productId) {
     const product = PRODUCTS.find(p => p.id === productId);
     const size = selectedSizes[productId];
-
     if (!size) return alert('Пожалуйста, выберите размер!');
 
     const existingItem = cart.find(item => item.id === productId && item.size === size);
@@ -696,7 +340,6 @@
         </div>
       `;
     }).join('');
-
     document.getElementById('cartTotal').innerText = total.toLocaleString('ru-RU') + ' ₽';
   }
 
@@ -709,44 +352,46 @@
     document.getElementById('checkoutModal').classList.add('show');
   }
 
-  // ===== ОТПРАВКА =====
-  function submitOrder() {
+  // ===== ГЕНЕРАЦИЯ ЗАКАЗА И КНОПОК =====
+  function generateOrder() {
     const name = document.getElementById('nameInput').value.trim();
     const phone = document.getElementById('phoneInput').value.trim();
     const city = document.getElementById('cityInput').value.trim();
     const address = document.getElementById('addressInput').value.trim();
 
-    // Проверки
     if (name.length < 2) return alert('Введите корректное ФИО');
     if (phone.replace(/\D/g, '').length < 10) return alert('Введите корректный телефон');
     if (city.length < 2) return alert('Введите город');
     if (address.length < 5) return alert('Введите полный адрес');
 
-    // Проверяем, открыто ли внутри Телеграма
-    if (!tg.initData) {
-      return alert('ОШИБКА: Вы открыли сайт не через Telegram. Пожалуйста, закройте это окно и откройте сайт через кнопку "Сайт / Регистрация" в боте @kraftutokBot.');
-    }
+    let total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    let itemsText = cart.map(item => `• ${item.name} (Размер: ${item.size}) — ${item.qty} шт. = ${item.price * item.qty} ₽`).join('\n');
 
-    const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    // Формируем текст для отправки
+    const orderText = 
+      `🛒 *Новый заказ с сайта!*\n\n` +
+      `👤 *Имя:* ${name}\n` +
+      `📱 *Телефон:* ${phone}\n` +
+      `🏙 *Город:* ${city}\n` +
+      `🏠 *Адрес:* ${address}\n\n` +
+      `📦 *Товары:*\n${itemsText}\n\n` +
+      `💰 *Итого: ${total} ₽*`;
 
-    const orderData = {
-      type: 'order',
-      name: name,
-      phone: phone,
-      city: city,
-      address: address,
-      items: cart,
-      total: total
-    };
+    // Ссылка для Telegram
+    const tgLink = `https://t.me/KRAFT_UTOK?text=${encodeURIComponent(orderText)}`;
+    document.getElementById('tgActionBtn').href = tgLink;
 
-    // Меняем экран на "Успех" ДО отправки, так как sendData закрывает окно
+    // Ссылка для ВК (в ВК нельзя передать текст через ссылку, поэтому просто открываем диалог)
+    const vkLink = `https://vk.me/club241798739`;
+    document.getElementById('vkActionBtn').href = vkLink;
+
+    // Показываем экран с кнопками
     document.getElementById('checkoutForm').style.display = 'none';
     document.getElementById('checkoutSuccess').style.display = 'block';
 
-    // Отправляем данные в Телеграм (окно закроется автоматически)
-    setTimeout(() => {
-      tg.sendData(JSON.stringify(orderData));
-    }, 500); 
+    // Очищаем корзину
+    cart = [];
+    updateCartUI();
   }
 
   function switchTab(tabId, btn) {
@@ -756,7 +401,6 @@
     btn.classList.add('active');
   }
 
-  // Запуск
   renderProducts();
   updateCartUI();
 </script>
