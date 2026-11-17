@@ -48,13 +48,12 @@
   .tab-content.active { display: block; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* КАТАЛОГ (УМЕНЬШЕННЫЕ КАРТОЧКИ) */
+  /* КАТАЛОГ */
   .filters { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; }
   .filters::-webkit-scrollbar { display: none; }
   .filter-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; font-family: inherit; font-size: 11px; font-weight: 600; white-space: nowrap; cursor: pointer; transition: all 0.2s; }
   .filter-btn.active { border-color: var(--primary); color: var(--primary); }
   
-  /* Сетка с маленькими карточками */
   .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
   
   .product-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
@@ -78,35 +77,49 @@
   /* МОДАЛКИ */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 1000; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
   .modal-overlay.show { opacity: 1; pointer-events: auto; }
-  .modal { background: var(--bg); width: 100%; max-width: 500px; border-radius: 20px 20px 0 0; padding: 20px 16px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1); max-height: 90vh; overflow-y: auto; border-top: 2px solid var(--primary); }
+  .modal { background: var(--bg); width: 100%; max-width: 500px; border-radius: 20px 20px 0 0; padding: 20px 16px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1); max-height: 90vh; overflow-y: auto; border-top: 2px solid var(--primary); position: relative; }
   .modal-overlay.show .modal { transform: translateY(0); }
   .close-btn { position: absolute; top: 16px; right: 16px; background: transparent; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; z-index: 10; }
   .modal h2 { font-size: 18px; font-weight: 900; margin-bottom: 16px; text-transform: uppercase; }
 
   /* КОРЗИНА */
-  .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
-  .cart-item-info h4 { font-size: 13px; font-weight: 700; }
+  .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .cart-item-info { flex-grow: 1; padding-right: 10px; }
+  .cart-item-info h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
   .cart-item-info p { font-size: 11px; color: var(--text-muted); }
-  .cart-item-price { font-size: 13px; font-weight: 700; color: var(--primary); }
-  .cart-total { display: flex; justify-content: space-between; font-size: 16px; font-weight: 900; margin: 16px 0; }
+  
+  .cart-item-controls { display: flex; align-items: center; gap: 10px; }
+  .cart-item-price { font-size: 14px; font-weight: 900; color: var(--primary); white-space: nowrap; }
+  
+  .remove-btn { background: transparent; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 4px; transition: color 0.2s; display: flex; align-items: center; }
+  .remove-btn:hover, .remove-btn:active { color: var(--primary); }
+  .remove-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+  .qty-controls { display: flex; align-items: center; background: var(--card); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .qty-btn { background: transparent; border: none; color: var(--text); width: 24px; height: 24px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .qty-btn:active { background: var(--border); }
+  .qty-val { font-size: 12px; font-weight: 700; width: 20px; text-align: center; }
+
+  .cart-total { display: flex; justify-content: space-between; font-size: 16px; font-weight: 900; margin: 20px 0; }
   .cart-total span { color: var(--primary); }
 
   .btn-primary { width: 100%; background: var(--primary); color: #000; border: none; padding: 14px; border-radius: 10px; font-family: inherit; font-size: 14px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
   .btn-primary:active { background: var(--primary-hover); }
 
-  /* ТЕКСТ ЗАКАЗА (ПРЕВЬЮ) */
+  /* ОФОРМЛЕНИЕ (ОПЛАТА) */
   .order-preview { background: rgba(0,0,0,0.5); border: 1px solid var(--border); padding: 10px; border-radius: 8px; font-size: 12px; color: var(--text-muted); white-space: pre-wrap; line-height: 1.4; margin-bottom: 16px; max-height: 150px; overflow-y: auto; }
-
-  /* УСПЕХ И КНОПКИ СВЯЗИ */
-  .success-screen { text-align: center; padding: 10px 0; }
-  .success-screen h2 { color: #00c853; font-size: 20px; margin-bottom: 8px; }
-  .success-screen p { color: var(--text-muted); font-size: 12px; line-height: 1.4; margin-bottom: 16px; }
   
+  .payment-box { text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--border); }
+  .payment-box p { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+  .qr-code { width: 160px; height: 160px; margin: 0 auto 10px; border-radius: 10px; border: 2px solid var(--primary); display: block; }
+  .warning-text { color: var(--primary); font-size: 11px; font-weight: bold; margin-bottom: 15px; }
+
   .contact-actions { display: flex; flex-direction: column; gap: 8px; }
   .action-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; border-radius: 10px; text-decoration: none; font-weight: 800; font-size: 14px; transition: all 0.2s; color: #fff; }
   .action-btn:active { transform: scale(0.98); }
   .btn-tg { background: #0088cc; }
   .btn-vk { background: #0077FF; }
+  .btn-bot { background: #2AABEE; } /* Цвет для бота */
 
   /* ТЕКСТОВЫЕ СТРАНИЦЫ */
   .text-page h2 { font-size: 18px; font-weight: 900; margin-bottom: 12px; text-transform: uppercase; }
@@ -117,6 +130,9 @@
   .contact-buttons { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
   .contact-btn { display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 14px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 13px; transition: all 0.3s; }
   .contact-btn:active { background: var(--border); }
+  
+  /* РЕКВИЗИТЫ */
+  .legal-req { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 10px; color: #666; line-height: 1.4; text-align: center; }
 </style>
 </head>
 <body>
@@ -130,7 +146,7 @@
 </header>
 
 <div class="hero">
-  <h1>Одежда и стиль <br><span>из Крыма</span></h1>
+  <h1>Одежда и стиль <br><span>от DK Style</span></h1>
   <p>Ограниченные дропы, оверсайз, унисекс. Доставка по РФ.</p>
 </div>
 
@@ -158,10 +174,10 @@
   <div class="text-page">
     <h2>🔒 Безопасность и данные</h2>
     <p><b>Наш сайт — это просто витрина.</b></p>
-    <p>Мы <u>не собираем и не храним</u> ваши персональные данные (ФИО, телефон, адрес). Сайт нужен только для того, чтобы вы могли посмотреть товары и выбрать нужный размер.</p>
+    <p>Мы <u>не собираем и не храним</u> ваши персональные данные на сервере. Сайт нужен только для того, чтобы вы могли посмотреть товары и выбрать нужный размер.</p>
     <h3>Как происходит заказ?</h3>
-    <p>Когда вы нажимаете «Оформить заказ», сайт просто формирует список выбранных вами товаров и предлагает отправить его нашему менеджеру в Telegram или ВКонтакте.</p>
-    <p><b>Все данные для доставки</b> (ФИО, номер телефона, город и адрес ПВЗ) менеджер уточнит у вас <u>уже в личном чате</u>. Это сделано для вашей безопасности, чтобы ваши данные не хранились на сторонних серверах.</p>
+    <p>Когда вы нажимаете «Оформить заказ», сайт формирует список выбранных товаров и предлагает отправить его нашему менеджеру в Telegram или ВКонтакте.</p>
+    <p><b>Все данные для доставки</b> (ФИО, номер телефона, город и адрес ПВЗ) менеджер уточнит у вас <u>уже в личном чате</u>. Это сделано для вашей безопасности.</p>
   </div>
 </div>
 
@@ -177,18 +193,31 @@
       <li>После отправки вы получите трек-номер.</li>
     </ul>
     <h3>Оплата</h3>
-    <p>Оплата производится после подтверждения заказа менеджером (перевод на карту или СБП).</p>
+    <p>Вы можете оплатить заказ по QR-коду (СБП) или по ссылке на оплату после подтверждения заказа менеджером.</p>
   </div>
 </div>
 
-<!-- КОНТАКТЫ -->
+<!-- КОНТАКТЫ И РЕКВИЗИТЫ -->
 <div id="tab-contacts" class="tab-content">
   <div class="text-page">
     <h2>Связаться с нами</h2>
     <p>Отвечаем лично, без ботов. Выберите удобный способ:</p>
     <div class="contact-buttons">
+      <!-- Добавлена кнопка бота -->
+      <a href="https://t.me/KRAFT_UTOK" target="_blank" class="contact-btn">🤖 Написать боту</a>
+      
       <a href="https://t.me/KRAFT_UTOK" target="_blank" class="contact-btn">✈️ Написать менеджеру в Telegram</a>
       <a href="https://vk.me/club241798739" target="_blank" class="contact-btn">💙 Написать ВКонтакте</a>
+      <a href="mailto:orderkraftutok@internet.ru" class="contact-btn">✉️ orderkraftutok@internet.ru</a>
+    </div>
+    
+    <!-- ЮРИДИЧЕСКИЕ РЕКВИЗИТЫ -->
+    <div class="legal-req">
+      <p><b>ИП Козлов Денис Константинович</b></p>
+      <p>ИНН: 270326395259 · ОГРНИП: 32627000073345</p>
+      <p>Адрес регистрации: г. Хабаровск</p>
+      <p>Основной ОКВЭД: 47.91</p>
+      <p style="margin-top: 8px;">© 2026 KRAFT UTÓK (DK Style). Все права защищены.</p>
     </div>
   </div>
 </div>
@@ -204,20 +233,36 @@
   </div>
 </div>
 
-<!-- ОФОРМЛЕНИЕ (БЕЗ ФОРМЫ) -->
+<!-- ОФОРМЛЕНИЕ (С ОПЛАТОЙ) -->
 <div class="modal-overlay" id="checkoutModal">
   <div class="modal">
     <button class="close-btn" onclick="closeModal('checkoutModal')">×</button>
     
-    <!-- Экран с кнопками -->
-    <div id="checkoutSuccess" class="success-screen">
-      <div style="font-size: 40px; margin-bottom: 10px;">📝</div>
-      <h2>Ваш заказ сформирован!</h2>
-      <p>Сайт не собирает ваши данные. Просто нажмите на удобную кнопку ниже, отправьте заказ менеджеру, и он уточнит у вас все детали для доставки (ФИО, телефон, адрес ПВЗ).</p>
+    <div class="success-screen">
+      <h2 style="color: #00c853;">Заказ сформирован!</h2>
+      <p>Проверьте состав заказа и перейдите к оплате.</p>
       
       <div class="order-preview" id="orderPreviewText"></div>
 
-      <div class="contact-actions">
+      <!-- БЛОК ОПЛАТЫ -->
+      <div class="payment-box">
+        <p>Отсканируйте QR-код (СБП) для оплаты:</p>
+        
+        <!-- ЗАМЕНИТЬ НА ВАШ QR-КОД -->
+        <!-- Вставьте путь к вашей картинке, например: src="qr.png" -->
+        <img src="https://via.placeholder.com/160x160?text=Ваш+QR+код" alt="QR код" class="qr-code">
+        
+        <p class="warning-text">⚠️ Обязательно укажите в комментарии к платежу вашу Фамилию!</p>
+        
+        <!-- ЗАМЕНИТЬ НА ВАШУ ССЫЛКУ ИЗ Т-БАНКА -->
+        <a href="ВАША_ССЫЛКА_ТБАНК" target="_blank" class="btn-primary" style="display:block; text-decoration:none; margin-bottom: 15px;">
+          Оплатить картой / СБП
+        </a>
+      </div>
+
+      <p style="margin-top: 15px; font-size: 12px;">После оплаты отправьте заказ менеджеру для уточнения доставки:</p>
+      
+      <div class="contact-actions" style="margin-top: 10px;">
         <a href="#" id="tgActionBtn" class="action-btn btn-tg" target="_blank">✈️ Отправить в Telegram</a>
         <a href="#" id="vkActionBtn" class="action-btn btn-vk" target="_blank">💙 Отправить ВКонтакте</a>
       </div>
@@ -311,19 +356,46 @@
       return;
     }
 
-    cartItemsDiv.innerHTML = cart.map(item => {
+    cartItemsDiv.innerHTML = cart.map((item, index) => {
       total += item.price * item.qty;
       return `
         <div class="cart-item">
           <div class="cart-item-info">
             <h4>${item.name}</h4>
-            <p>Размер: ${item.size} | Кол-во: ${item.qty}</p>
+            <p>Размер: ${item.size}</p>
           </div>
-          <div class="cart-item-price">${(item.price * item.qty).toLocaleString('ru-RU')} ₽</div>
+          
+          <div class="cart-item-controls">
+            <div class="qty-controls">
+              <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
+              <span class="qty-val">${item.qty}</span>
+              <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
+            </div>
+            
+            <div class="cart-item-price">${(item.price * item.qty).toLocaleString('ru-RU')} ₽</div>
+            
+            <button class="remove-btn" onclick="removeFromCart(${index})" title="Удалить товар">
+              <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </button>
+          </div>
         </div>
       `;
     }).join('');
     document.getElementById('cartTotal').innerText = total.toLocaleString('ru-RU') + ' ₽';
+  }
+
+  function removeFromCart(index) {
+    cart.splice(index, 1);
+    updateCartUI();
+  }
+
+  function changeQty(index, delta) {
+    cart[index].qty += delta;
+    if (cart[index].qty <= 0) {
+      removeFromCart(index);
+    } else {
+      updateCartUI();
+    }
   }
 
   function openCart() { document.getElementById('cartModal').classList.add('show'); }
@@ -332,11 +404,9 @@
   function openCheckout() {
     if (cart.length === 0) return alert('Корзина пуста!');
     
-    // Закрываем корзину, открываем окно оформления
     closeModal('cartModal');
     document.getElementById('checkoutModal').classList.add('show');
 
-    // Генерируем текст заказа
     let total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
     let itemsText = cart.map(item => `• ${item.name} (Размер: ${item.size}) — ${item.qty} шт. = ${item.price * item.qty} ₽`).join('\n');
 
@@ -344,20 +414,17 @@
       `🛒 *Новый заказ с сайта!*\n\n` +
       `📦 *Товары:*\n${itemsText}\n\n` +
       `💰 *Итого: ${total} ₽*\n\n` +
-      `_Пожалуйста, уточните данные для доставки (ФИО, телефон, адрес ПВЗ)._`;
+      `_Я оплатил(а) заказ. Пожалуйста, уточните данные для доставки (ФИО, телефон, адрес ПВЗ)._`;
 
-    // Выводим превью текста
     document.getElementById('orderPreviewText').innerText = 
       `📦 Товары:\n${itemsText}\n\n💰 Итого: ${total} ₽`;
 
-    // Формируем ссылки
     const tgLink = `https://t.me/KRAFT_UTOK?text=${encodeURIComponent(orderText)}`;
     document.getElementById('tgActionBtn').href = tgLink;
 
     const vkLink = `https://vk.me/club241798739`;
     document.getElementById('vkActionBtn').href = vkLink;
 
-    // Очищаем корзину после формирования
     cart = [];
     updateCartUI();
   }
