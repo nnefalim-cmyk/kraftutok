@@ -3,353 +3,468 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KRAFT UTÓK — Official Store</title>
+<title>KRAFT UTÓK — магазин одежды</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0a0a;
-    --surface: #121212;
-    --surface-hover: #1c1c1c;
-    --text-main: #f0f0f0;
-    --text-muted: #888888;
-    --border: #2a2a2a;
-    --font-body: 'Inter', sans-serif;
-    --font-heading: 'Cormorant Garamond', serif;
+    --bg: #080405;
+    --card: #150808;
+    --primary: #ff1a1a;
+    --primary-hover: #ff4d4d;
+    --text: #ffffff;
+    --text-muted: #a89898;
+    --border: #330000;
+    --glow: rgba(255, 26, 26, 0.4);
+    --anim-opacity: 0.15;
+    --anim-speed: 10s;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   
   body { 
-    font-family: var(--font-body); 
+    font-family: 'Montserrat', sans-serif; 
     background: var(--bg); 
-    color: var(--text-main); 
+    color: var(--text); 
+    overflow-x: hidden; 
     min-height: 100vh; 
-    padding-bottom: 60px;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
+    padding-bottom: 40px;
+    transition: background 0.5s ease, color 0.5s ease;
+    position: relative;
   }
 
-  /* НАВИГАЦИЯ */
-  header { 
-    position: sticky; top: 0; z-index: 100; 
-    background: rgba(10, 10, 10, 0.85); 
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border); 
-    padding: 20px 24px; 
-    display: flex; justify-content: space-between; align-items: center; 
+  /* АНИМИРОВАННЫЙ ФОН */
+  .animated-bg {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: var(--anim-opacity);
+    transition: opacity 0.5s ease;
   }
-  .logo { 
-    font-family: var(--font-heading); 
-    font-size: 28px; font-weight: 600; 
-    text-transform: uppercase; letter-spacing: 3px; 
-    cursor: pointer; color: var(--text-main);
+  
+  .blob {
+    position: absolute;
+    width: 50vw; height: 50vw;
+    background: var(--primary);
+    border-radius: 50%;
+    filter: blur(80px);
+    animation: float var(--anim-speed) infinite alternate ease-in-out;
+    transition: background 0.5s ease;
   }
-  .nav-links { display: none; gap: 32px; }
-  .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 2px; transition: color 0.3s; }
-  .nav-links a:hover { color: var(--text-main); }
+  
+  .blob-1 { top: -10%; left: -10%; animation-duration: calc(var(--anim-speed) * 1.2); }
+  .blob-2 { bottom: -10%; right: -10%; background: #ff6600; animation-duration: calc(var(--anim-speed) * 0.8); animation-delay: -2s; }
+  .blob-3 { top: 40%; left: 30%; width: 30vw; height: 30vw; background: #9900ff; animation-duration: calc(var(--anim-speed) * 1.5); animation-delay: -5s; }
 
-  .cart-btn { 
-    background: transparent; border: none; color: var(--text-main);
-    font-family: var(--font-body); font-size: 11px; font-weight: 500; 
-    text-transform: uppercase; letter-spacing: 2px;
-    cursor: pointer; display: flex; align-items: center; gap: 8px;
-    transition: opacity 0.3s;
+  @keyframes float {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(10vw, 10vh) scale(1.1); }
+    100% { transform: translate(-5vw, 5vh) scale(0.9); }
   }
-  .cart-btn:hover { opacity: 0.7; }
-  .cart-count { 
-    background: var(--text-main); color: var(--bg); 
-    font-size: 10px; font-weight: 600; 
-    width: 18px; height: 18px; border-radius: 50%; 
-    display: flex; align-items: center; justify-content: center; 
+
+  .no-anim .blob { animation: none !important; display: none; }
+
+  /* ПАНЕЛЬ УПРАВЛЕНИЯ */
+  .settings-btn {
+    position: fixed; top: 16px; right: 16px; z-index: 1000;
+    background: var(--card); border: 1px solid var(--border); color: var(--text);
+    width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: transform 0.3s, background 0.3s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
   }
+  .settings-btn:hover { transform: rotate(90deg); background: var(--primary); color: #000; border-color: var(--primary); }
+  
+  .settings-panel {
+    position: fixed; top: 64px; right: 16px; z-index: 999;
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px; width: 260px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    display: none; flex-direction: column; gap: 12px;
+    animation: fadeIn 0.3s ease;
+  }
+  .settings-panel.show { display: flex; }
+  .settings-panel h3 { font-size: 12px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+  
+  .color-options { display: flex; gap: 8px; flex-wrap: wrap; }
+  .color-dot { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: border 0.2s; }
+  .color-dot.active { border-color: var(--text); }
+  
+  .toggle-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+  .toggle-switch { position: relative; width: 36px; height: 20px; background: var(--border); border-radius: 10px; cursor: pointer; transition: background 0.3s; }
+  .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: var(--text-muted); border-radius: 50%; transition: transform 0.3s; }
+  .toggle-switch.active { background: var(--primary); }
+  .toggle-switch.active::after { transform: translateX(16px); background: #000; }
+
+  /* ШАПКА */
+  header { position: sticky; top: 0; z-index: 100; background: rgba(8, 4, 5, 0.7); backdrop-filter: blur(12px); border-bottom: 2px solid var(--border); padding: 12px 60px 12px 16px; display: flex; justify-content: space-between; align-items: center; transition: background 0.5s, border 0.5s; }
+  .logo { font-size: 18px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+  .logo span { color: var(--primary); font-style: italic; font-weight: 300; transition: color 0.5s; }
+  .cart-btn { position: relative; background: transparent; border: 1px solid var(--primary); color: var(--primary); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; }
+  .cart-btn:active { background: var(--primary); color: #000; }
+  .cart-btn svg { width: 18px; height: 18px; fill: currentColor; }
+  .cart-count { position: absolute; top: -4px; right: -4px; background: var(--primary); color: #000; font-size: 10px; font-weight: 900; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bg); transition: background 0.5s; }
 
   /* ГЕРОЙ */
-  .hero { 
-    padding: 100px 24px; text-align: center; 
-    background: var(--surface); border-bottom: 1px solid var(--border);
-    position: relative; overflow: hidden;
-  }
-  .hero::before {
-    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.03) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .hero h1 { 
-    font-family: var(--font-heading); 
-    font-size: 48px; font-weight: 400; line-height: 1.1; 
-    margin-bottom: 20px; letter-spacing: 2px;
-  }
-  .hero p { font-size: 14px; color: var(--text-muted); max-width: 400px; margin: 0 auto; letter-spacing: 1px; font-weight: 300; }
+  .hero { padding: 30px 16px; text-align: center; background: linear-gradient(180deg, var(--glow) 0%, transparent 100%); border-bottom: 1px solid var(--border); transition: background 0.5s; }
+  .hero h1 { font-size: 28px; font-weight: 900; line-height: 1.1; margin-bottom: 8px; text-transform: uppercase; }
+  .hero h1 span { color: var(--primary); transition: color 0.5s; }
+  .hero p { font-size: 12px; color: var(--text-muted); max-width: 280px; margin: 0 auto; line-height: 1.4; }
 
-  /* СЕТКА ТОВАРОВ */
-  .container { max-width: 1200px; margin: 0 auto; padding: 60px 24px; }
-  
-  .section-title { 
-    font-family: var(--font-heading); font-size: 32px; font-weight: 400; 
-    margin-bottom: 40px; text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 20px;
-    letter-spacing: 2px;
-  }
+  /* НАВИГАЦИЯ */
+  .nav-tabs { display: flex; overflow-x: auto; padding: 8px 16px; gap: 6px; border-bottom: 1px solid var(--border); scrollbar-width: none; }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .tab-btn { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 6px 12px; border-radius: 100px; font-family: inherit; font-weight: 700; font-size: 11px; white-space: nowrap; cursor: pointer; transition: all 0.3s; }
+  .tab-btn.active { background: var(--primary); color: #000; border-color: var(--primary); box-shadow: 0 0 10px var(--glow); }
 
-  .filters { display: flex; justify-content: center; gap: 12px; margin-bottom: 48px; flex-wrap: wrap; }
-  .filter-btn { 
-    background: transparent; border: 1px solid var(--border); color: var(--text-muted);
-    padding: 10px 20px; border-radius: 0; 
-    font-family: var(--font-body); font-size: 11px; font-weight: 500; 
-    text-transform: uppercase; letter-spacing: 1.5px;
-    cursor: pointer; transition: all 0.3s;
-  }
-  .filter-btn.active, .filter-btn:hover { background: var(--text-main); color: var(--bg); border-color: var(--text-main); }
+  /* КОНТЕНТ */
+  .tab-content { display: none; padding: 16px; animation: fadeIn 0.4s ease; }
+  .tab-content.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  .products-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-    gap: 40px; 
-  }
+  /* КАТАЛОГ */
+  .filters { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; }
+  .filters::-webkit-scrollbar { display: none; }
+  .filter-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; font-family: inherit; font-size: 11px; font-weight: 600; white-space: nowrap; cursor: pointer; transition: all 0.2s; }
+  .filter-btn.active { border-color: var(--primary); color: var(--primary); }
   
-  .product-card { 
-    background: var(--surface); 
-    border: 1px solid var(--border); 
-    transition: all 0.4s ease; 
-    cursor: pointer; position: relative;
-  }
-  .product-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); border-color: #444; }
-
-  .product-img { width: 100%; aspect-ratio: 3/4; overflow: hidden; background: #000; position: relative; }
-  .product-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease; opacity: 0.9; }
-  .product-card:hover .product-img img { transform: scale(1.05); opacity: 1; }
+  .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
   
-  .badge { 
-    position: absolute; top: 16px; left: 16px; 
-    background: transparent; color: var(--text-main); 
-    font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 2px;
-    padding: 6px 12px; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(4px);
-  }
-
-  .product-info { padding: 24px; text-align: center; }
-  .product-info h3 { font-family: var(--font-body); font-size: 14px; font-weight: 500; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; }
-  .product-info .desc { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; font-weight: 300; }
-  .price { font-family: var(--font-heading); font-size: 24px; font-weight: 400; margin-bottom: 20px; display: block; letter-spacing: 1px; }
+  .product-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; transition: background 0.5s, border 0.5s; }
+  .product-img { width: 100%; aspect-ratio: 1; position: relative; background: #000; }
+  .product-img img { width: 100%; height: 100%; object-fit: cover; }
+  .badge { position: absolute; top: 6px; left: 6px; background: var(--primary); color: #000; font-size: 8px; font-weight: 900; padding: 2px 6px; border-radius: 4px; transition: background 0.5s; }
   
-  .sizes { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-  .size-btn { 
-    background: transparent; border: 1px solid var(--border); color: var(--text-muted);
-    min-width: 36px; height: 36px; padding: 0 10px; border-radius: 0;
-    font-family: var(--font-body); font-size: 11px; font-weight: 500; 
-    cursor: pointer; transition: all 0.2s;
-  }
-  .size-btn.active, .size-btn:hover { background: var(--text-main); color: var(--bg); border-color: var(--text-main); }
+  .product-info { padding: 8px; display: flex; flex-direction: column; flex-grow: 1; }
+  .product-info h3 { font-size: 11px; font-weight: 700; margin-bottom: 2px; line-height: 1.2; }
+  .product-info .desc { font-size: 9px; color: var(--text-muted); margin-bottom: 6px; line-height: 1.2; }
   
-  .add-btn { 
-    width: 100%;
-    background: transparent; color: var(--text-main); border: 1px solid var(--text-main); 
-    padding: 16px; font-family: var(--font-body); font-size: 11px; font-weight: 500; 
-    text-transform: uppercase; letter-spacing: 2px; cursor: pointer; 
-    transition: all 0.3s;
-  }
-  .add-btn:hover { background: var(--text-main); color: var(--bg); }
+  .sizes { display: flex; gap: 3px; margin-bottom: 8px; flex-wrap: wrap; }
+  .size-btn { background: transparent; border: 1px solid var(--border); color: var(--text-muted); width: 24px; height: 24px; border-radius: 4px; font-family: inherit; font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .size-btn.active { background: var(--primary); border-color: var(--primary); color: #000; }
+  
+  .product-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+  .price { font-size: 13px; font-weight: 900; color: var(--primary); transition: color 0.5s; }
+  .add-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 4px 8px; border-radius: 4px; font-family: inherit; font-size: 9px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .add-btn:active { background: var(--primary); color: #000; }
 
   /* МОДАЛКИ */
-  .modal-overlay { 
-    position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
-    z-index: 1000; display: flex; align-items: center; justify-content: center; 
-    opacity: 0; pointer-events: none; transition: opacity 0.4s; padding: 20px;
-  }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 1000; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
   .modal-overlay.show { opacity: 1; pointer-events: auto; }
-  
-  .modal { 
-    background: var(--surface); width: 100%; max-width: 520px; 
-    padding: 40px; position: relative; max-height: 90vh; overflow-y: auto;
-    transform: translateY(20px); transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
-    box-shadow: 0 30px 60px rgba(0,0,0,0.6); border: 1px solid var(--border);
-  }
+  .modal { background: var(--bg); width: 100%; max-width: 500px; border-radius: 20px 20px 0 0; padding: 20px 16px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1); max-height: 90vh; overflow-y: auto; border-top: 2px solid var(--primary); position: relative; transition: background 0.5s; }
   .modal-overlay.show .modal { transform: translateY(0); }
-  
-  .close-btn { 
-    position: absolute; top: 20px; right: 20px; 
-    background: transparent; border: none; font-size: 24px; 
-    cursor: pointer; color: var(--text-muted); transition: color 0.2s;
-  }
-  .close-btn:hover { color: var(--text-main); }
-  .modal h2 { font-family: var(--font-heading); font-size: 28px; font-weight: 400; margin-bottom: 30px; letter-spacing: 1px; }
+  .close-btn { position: absolute; top: 16px; right: 16px; background: transparent; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; z-index: 10; }
+  .modal h2 { font-size: 18px; font-weight: 900; margin-bottom: 16px; text-transform: uppercase; }
 
   /* КОРЗИНА */
-  .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border); }
-  .cart-item-info h4 { font-size: 14px; font-weight: 500; margin-bottom: 6px; letter-spacing: 0.5px; }
-  .cart-item-info p { font-size: 12px; color: var(--text-muted); }
-  .cart-item-price { font-family: var(--font-heading); font-size: 20px; font-weight: 400; }
-
-  .qty-controls { display: flex; align-items: center; border: 1px solid var(--border); margin-top: 12px; width: fit-content; }
-  .qty-btn { background: transparent; border: none; color: var(--text-main); width: 32px; height: 32px; font-size: 16px; cursor: pointer; transition: background 0.2s; }
-  .qty-btn:hover { background: var(--surface-hover); }
-  .qty-val { font-size: 12px; width: 32px; text-align: center; }
-
-  .remove-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-top: 12px; display: block; transition: color 0.2s; }
-  .remove-btn:hover { color: #ff4d4d; }
-
-  .cart-total { display: flex; justify-content: space-between; font-family: var(--font-heading); font-size: 24px; margin: 30px 0; border-top: 1px solid var(--border); padding-top: 20px; }
-
-  .btn-primary { 
-    width: 100%; background: var(--text-main); color: var(--bg); 
-    border: none; padding: 20px; font-family: var(--font-body); font-size: 12px; 
-    font-weight: 500; text-transform: uppercase; letter-spacing: 2px; 
-    cursor: pointer; transition: opacity 0.3s;
-  }
-  .btn-primary:hover { opacity: 0.8; }
-
-  /* ОПЛАТА */
-  .order-preview { background: var(--bg); padding: 20px; font-size: 13px; color: var(--text-muted); white-space: pre-wrap; margin-bottom: 30px; border: 1px solid var(--border); font-weight: 300; }
+  .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .cart-item-info { flex-grow: 1; padding-right: 10px; }
+  .cart-item-info h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .cart-item-info p { font-size: 11px; color: var(--text-muted); }
   
-  .payment-box { text-align: center; padding: 30px; border: 1px solid var(--border); margin-bottom: 30px; }
-  .payment-box p { font-size: 13px; margin-bottom: 20px; color: var(--text-muted); font-weight: 300; }
-  .warning-text { font-size: 12px; color: #ff4d4d; font-weight: 500; margin-bottom: 20px; letter-spacing: 0.5px; }
+  .cart-item-controls { display: flex; align-items: center; gap: 10px; }
+  .cart-item-price { font-size: 14px; font-weight: 900; color: var(--primary); white-space: nowrap; }
+  
+  .remove-btn { background: transparent; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 4px; transition: color 0.2s; display: flex; align-items: center; }
+  .remove-btn:hover, .remove-btn:active { color: var(--primary); }
+  .remove-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
-  .contact-actions { display: flex; flex-direction: column; gap: 12px; }
-  .action-btn { 
-    display: block; text-align: center; padding: 18px; 
-    text-decoration: none; font-size: 11px; font-weight: 500; 
-    text-transform: uppercase; letter-spacing: 2px;
-    border: 1px solid var(--border); color: var(--text-main); 
-    transition: all 0.3s;
-  }
-  .action-btn:hover { border-color: var(--text-main); background: var(--text-main); color: var(--bg); }
+  .qty-controls { display: flex; align-items: center; background: var(--card); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .qty-btn { background: transparent; border: none; color: var(--text); width: 24px; height: 24px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .qty-btn:active { background: var(--border); }
+  .qty-val { font-size: 12px; font-weight: 700; width: 20px; text-align: center; }
 
-  /* ФУТЕР */
-  footer { background: var(--bg); padding: 80px 24px; border-top: 1px solid var(--border); text-align: center; margin-top: 80px; }
-  .footer-logo { font-family: var(--font-heading); font-size: 32px; margin-bottom: 40px; letter-spacing: 4px; }
-  .footer-links { display: flex; justify-content: center; gap: 32px; margin-bottom: 60px; flex-wrap: wrap; }
-  .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; transition: color 0.2s; }
-  .footer-links a:hover { color: var(--text-main); }
-  .legal-req { font-size: 11px; color: #555; line-height: 2; font-weight: 300; }
+  .cart-total { display: flex; justify-content: space-between; font-size: 16px; font-weight: 900; margin: 20px 0; }
+  .cart-total span { color: var(--primary); }
 
-  @media (min-width: 768px) {
-    .nav-links { display: flex; }
-    .hero h1 { font-size: 72px; }
-    .modal { padding: 48px; }
-  }
+  .btn-primary { width: 100%; background: var(--primary); color: #000; border: none; padding: 14px; border-radius: 10px; font-family: inherit; font-size: 14px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+  .btn-primary:active { background: var(--primary-hover); }
+
+  /* ОФОРМЛЕНИЕ */
+  .order-preview { background: rgba(0,0,0,0.5); border: 1px solid var(--border); padding: 10px; border-radius: 8px; font-size: 12px; color: var(--text-muted); white-space: pre-wrap; line-height: 1.4; margin-bottom: 16px; max-height: 150px; overflow-y: auto; }
+  
+  .contact-actions { display: flex; flex-direction: column; gap: 8px; }
+  .action-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; border-radius: 10px; text-decoration: none; font-weight: 800; font-size: 14px; transition: all 0.2s; color: #fff; }
+  .action-btn:active { transform: scale(0.98); }
+  .btn-tg { background: #0088cc; }
+  .btn-vk { background: #0077FF; }
+
+  /* ТЕКСТОВЫЕ СТРАНИЦЫ И ПАРТНЕРЫ */
+  .text-page h2 { font-size: 18px; font-weight: 900; margin-bottom: 12px; text-transform: uppercase; }
+  .text-page h3 { font-size: 14px; font-weight: 700; margin: 16px 0 8px; color: var(--primary); }
+  .text-page p, .text-page li { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 8px; }
+  .text-page ul { padding-left: 16px; }
+  .text-page a { color: var(--primary); text-decoration: none; font-weight: 700; }
+  .contact-buttons { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+  .contact-btn { display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 14px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 13px; transition: all 0.3s; }
+  .contact-btn:active { background: var(--border); }
+  
+  /* БЛОК ПАРТНЕРОВ (ПУСТОЙ) */
+  .partners-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .partner-card { background: var(--card); border: 1px dashed var(--border); padding: 20px; border-radius: 10px; text-align: center; color: var(--text-muted); font-size: 12px; display: flex; align-items: center; justify-content: center; min-height: 80px; }
+  .accessories-title { font-size: 14px; font-weight: 700; margin-top: 24px; margin-bottom: 12px; color: var(--primary); text-transform: uppercase; }
+
+  /* РЕКВИЗИТЫ */
+  .legal-req { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 10px; color: #666; line-height: 1.4; text-align: center; }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">KRAFT UTÓK</div>
-  <div class="nav-links">
-    <a href="#" onclick="switchTab('catalog', document.querySelector('.filter-btn'))">Каталог</a>
-    <a href="#" onclick="switchTab('delivery', document.querySelector('.filter-btn'))">Доставка</a>
-    <a href="#" onclick="switchTab('contacts', document.querySelector('.filter-btn'))">Контакты</a>
+<!-- АНИМИРОВАННЫЙ ФОН -->
+<div class="animated-bg" id="animatedBg">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+
+<!-- КНОПКА НАСТРОЕК И ПАНЕЛЬ -->
+<button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+<div class="settings-panel" id="settingsPanel">
+  <div>
+    <h3>Цветовая схема</h3>
+    <div class="color-options" id="colorOptions">
+      <div class="color-dot active" style="background: #ff1a1a;" onclick="setTheme('red', this)"></div>
+      <div class="color-dot" style="background: #00c853;" onclick="setTheme('green', this)"></div>
+      <div class="color-dot" style="background: #2979ff;" onclick="setTheme('blue', this)"></div>
+      <div class="color-dot" style="background: #aa00ff;" onclick="setTheme('purple', this)"></div>
+      <div class="color-dot" style="background: #ff9100;" onclick="setTheme('orange', this)"></div>
+    </div>
   </div>
+  <div class="toggle-row">
+    <span>Анимация фона</span>
+    <div class="toggle-switch active" id="animToggle" onclick="toggleAnimation()"></div>
+  </div>
+  <div class="toggle-row">
+    <span>Скорость анимации</span>
+    <input type="range" min="5" max="30" value="10" id="speedSlider" style="width: 80px;" oninput="changeSpeed(this.value)">
+  </div>
+</div>
+
+<header>
+  <div class="logo">KRAFT <span>UTÓK</span></div>
   <button class="cart-btn" onclick="openCart()">
-    КОРЗИНА <span class="cart-count" id="cartCount">0</span>
+    <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+    <span class="cart-count" id="cartCount">0</span>
   </button>
 </header>
 
 <div class="hero">
-  <h1>Craft & Flow</h1>
-  <p>Одежда, в которой ремесло встречает поток. Ограниченные дропы, оверсайз, унисекс.</p>
+  <h1>Одежда и стиль <br><span>от DK Style</span></h1>
+  <p>Ограниченные дропы, оверсайз, унисекс. Доставка по РФ.</p>
 </div>
 
-<div class="container">
-  <!-- КАТАЛОГ -->
-  <div id="tab-catalog" class="tab-content active">
-    <h2 class="section-title">Коллекция 2026</h2>
-    <div class="filters">
-      <button class="filter-btn active" onclick="filterProducts('all', this)">Все</button>
-      <button class="filter-btn" onclick="filterProducts('tshirts', this)">Футболки</button>
-      <button class="filter-btn" onclick="filterProducts('hoodies', this)">Худи</button>
-      <button class="filter-btn" onclick="filterProducts('sweatshirts', this)">Свитшоты</button>
-      <button class="filter-btn" onclick="filterProducts('shoes', this)">Обувь</button>
+<div class="nav-tabs">
+  <button class="tab-btn active" onclick="switchTab('catalog', this)">Каталог</button>
+  <button class="tab-btn" onclick="switchTab('partners', this)">🤝 Партнеры</button>
+  <button class="tab-btn" onclick="switchTab('safety', this)">🔒 Безопасность</button>
+  <button class="tab-btn" onclick="switchTab('delivery', this)">Доставка</button>
+  <button class="tab-btn" onclick="switchTab('contacts', this)">Контакты</button>
+</div>
+
+<!-- КАТАЛОГ -->
+<div id="tab-catalog" class="tab-content active">
+  <div class="filters">
+    <button class="filter-btn active" onclick="filterProducts('all', this)">Все</button>
+    <button class="filter-btn" onclick="filterProducts('tshirts', this)">👕 Футболки</button>
+    <button class="filter-btn" onclick="filterProducts('hoodies', this)">🧥 Худи</button>
+    <button class="filter-btn" onclick="filterProducts('sweatshirts', this)">👚 Свитшоты</button>
+    <button class="filter-btn" onclick="filterProducts('accessories', this)">🧢 Аксессуары</button>
+  </div>
+  <div class="products-grid" id="productsGrid"></div>
+</div>
+
+<!-- ПАРТНЕРЫ (НОВАЯ ВКЛАДКА) -->
+<div id="tab-partners" class="tab-content">
+  <div class="text-page">
+    <h2>🤝 Наши партнеры</h2>
+    <p>Мы сотрудничаем с лучшими брендами и мастерами, чтобы предложить вам полный образ.</p>
+    
+    <div class="accessories-title">🧢 Аксессуары</div>
+    <div class="products-grid" id="partnersProductsGrid"></div>
+
+    <h3 style="margin-top: 30px;">🔗 Полезные ссылки</h3>
+    <p>Здесь скоро появятся ссылки на наших партнеров.</p>
+    <!-- БЛОК ДЛЯ ССЫЛОК НА ПАРТНЕРОВ (ПОКА ПУСТОЙ) -->
+    <div class="partners-grid">
+      <!-- Партнер 1 -->
+      <div class="partner-card">
+        <span>Ссылка на партнера<br>(Скоро)</span>
+      </div>
+      <!-- Партнер 2 -->
+      <div class="partner-card">
+        <span>Ссылка на партнера<br>(Скоро)</span>
+      </div>
     </div>
-    <div class="products-grid" id="productsGrid"></div>
-  </div>
 
-  <!-- ДОСТАВКА -->
-  <div id="tab-delivery" class="tab-content" style="display:none; text-align:center; max-width: 600px; margin: 0 auto;">
-    <h2 class="section-title">Доставка и оплата</h2>
-    <p style="margin-bottom: 20px; color: var(--text-muted); font-weight: 300;">Мы отправляем заказы по всей России через <b>Почту России</b> и <b>СДЭК</b>.</p>
-    <p style="margin-bottom: 20px; color: var(--text-muted); font-weight: 300;">Стоимость доставки рассчитывается менеджером индивидуально. Отправка в течение 1-3 рабочих дней после оплаты.</p>
-    <p style="margin-bottom: 20px; color: var(--text-muted); font-weight: 300;">Оплата производится по ссылке на оплату после подтверждения заказа менеджером.</p>
   </div>
+</div>
 
-  <!-- КОНТАКТЫ -->
-  <div id="tab-contacts" class="tab-content" style="display:none; text-align:center; max-width: 600px; margin: 0 auto;">
-    <h2 class="section-title">Связаться с нами</h2>
-    <p style="margin-bottom: 32px; color: var(--text-muted); font-weight: 300;">Отвечаем лично, без ботов.</p>
-    <div class="contact-actions">
-      <a href="https://t.me/kraftutokBot" target="_blank" class="action-btn">🤖 Написать боту</a>
-      <a href="https://t.me/KRAFT_UTOK" target="_blank" class="action-btn">✈️ Написать менеджеру в Telegram</a>
-      <a href="https://vk.me/club241798739" target="_blank" class="action-btn">💙 Написать ВКонтакте</a>
-      <a href="mailto:orderkraftutok@internet.ru" class="action-btn">✉️ orderkraftutok@internet.ru</a>
+<!-- БЕЗОПАСНОСТЬ -->
+<div id="tab-safety" class="tab-content">
+  <div class="text-page">
+    <h2>🔒 Безопасность и данные</h2>
+    <p><b>Наш сайт — это просто витрина.</b></p>
+    <p>Мы <u>не собираем и не храним</u> ваши персональные данные на сервере. Сайт нужен только для того, чтобы вы могли посмотреть товары и выбрать нужный размер.</p>
+    <h3>Как происходит заказ?</h3>
+    <p>Когда вы нажимаете «Оформить заказ», сайт формирует список выбранных товаров и предлагает отправить его нашему менеджеру в Telegram или ВКонтакте.</p>
+    <p><b>Все данные для доставки</b> (ФИО, номер телефона, город и адрес ПВЗ) и удобный способ оплаты менеджер уточнит у вас <u>уже в личном чате</u>. Это сделано для вашей безопасности.</p>
+  </div>
+</div>
+
+<!-- ДОСТАВКА -->
+<div id="tab-delivery" class="tab-content">
+  <div class="text-page">
+    <h2>Доставка и оплата</h2>
+    <h3>Способы доставки</h3>
+    <p>Мы отправляем заказы по всей России через <b>Почту России</b> и <b>СДЭК</b>.</p>
+    <ul>
+      <li>Стоимость доставки рассчитывается менеджером индивидуально.</li>
+      <li>Отправка в течение 1-3 рабочих дней после оплаты.</li>
+      <li>После отправки вы получите трек-номер.</li>
+    </ul>
+    <h3>Оплата</h3>
+    <p>После подтверждения заказа менеджер пришлет вам удобные реквизиты для оплаты (перевод на карту или СБП).</p>
+  </div>
+</div>
+
+<!-- КОНТАКТЫ И РЕКВИЗИТЫ -->
+<div id="tab-contacts" class="tab-content">
+  <div class="text-page">
+    <h2>Связаться с нами</h2>
+    <p>Отвечаем лично, без ботов. Выберите удобный способ:</p>
+    <div class="contact-buttons">
+      <a href="https://t.me/kraftutokBot" target="_blank" class="contact-btn">🤖 Написать боту</a>
+      <a href="https://t.me/KRAFT_UTOK" target="_blank" class="contact-btn">✈️ Написать менеджеру в Telegram</a>
+      <a href="https://vk.me/club241798739" target="_blank" class="contact-btn">💙 Написать ВКонтакте</a>
+      <a href="mailto:orderkraftutok@internet.ru" class="contact-btn">✉️ orderkraftutok@internet.ru</a>
+    </div>
+    
+    <!-- ЮРИДИЧЕСКИЕ РЕКВИЗИТЫ -->
+    <div class="legal-req">
+      <p><b>ИП Козлов Денис Константинович</b></p>
+      <p>ИНН: 270326395259 · ОГРНИП: 32627000073345</p>
+      <p>Адрес регистрации: г. Хабаровск</p>
+      <p>Основной ОКВЭД: 47.91</p>
+      <p style="margin-top: 8px;">© 2026 KRAFT UTÓK (DK Style). Все права защищены.</p>
     </div>
   </div>
 </div>
 
-<footer>
-  <div class="footer-logo">KRAFT UTÓK</div>
-  <div class="footer-links">
-    <a href="#" onclick="switchTab('catalog', document.querySelector('.filter-btn'))">Каталог</a>
-    <a href="#" onclick="switchTab('delivery', document.querySelector('.filter-btn'))">Доставка</a>
-    <a href="#" onclick="switchTab('contacts', document.querySelector('.filter-btn'))">Контакты</a>
-  </div>
-  <div class="legal-req">
-    <p><b>ИП Козлов Денис Константинович</b></p>
-    <p>ИНН: 270326395259 · ОГРНИП: 32627000073345 · г. Хабаровск</p>
-    <p>© 2026 KRAFT UTÓK. Все права защищены.</p>
-  </div>
-</footer>
-
-<!-- МОДАЛКА: КОРЗИНА -->
+<!-- КОРЗИНА -->
 <div class="modal-overlay" id="cartModal">
   <div class="modal">
     <button class="close-btn" onclick="closeModal('cartModal')">×</button>
     <h2>Ваша корзина</h2>
     <div id="cartItems"></div>
     <div class="cart-total">Итого: <span id="cartTotal">0 ₽</span></div>
-    <button class="btn-primary" onclick="openCheckout()">Оформить заказ</button>
+    <button class="btn-primary" onclick="openCheckout()">Перейти к оформлению</button>
   </div>
 </div>
 
-<!-- МОДАЛКА: ОПЛАТА -->
+<!-- ОФОРМЛЕНИЕ (БЕЗ ОПЛАТЫ) -->
 <div class="modal-overlay" id="checkoutModal">
   <div class="modal">
     <button class="close-btn" onclick="closeModal('checkoutModal')">×</button>
-    <h2>Оплата заказа</h2>
     
-    <div class="order-preview" id="orderPreviewText"></div>
-
-    <div class="payment-box">
-      <p>Нажмите на кнопку ниже, чтобы перейти к оплате:</p>
-      <p class="warning-text">⚠️ В комментарии к платежу укажите вашу Фамилию!</p>
+    <div class="success-screen">
+      <h2 style="color: #00c853;">Заказ сформирован!</h2>
+      <p style="margin-bottom: 16px; font-size: 13px; color: var(--text-muted);">Проверьте состав вашего заказа. Для завершения оформления и уточнения деталей доставки, отправьте заказ менеджеру:</p>
       
-      <!-- ССЫЛКА НА ОПЛАТУ Т-БАНК -->
-      <a href="https://paylink.tbank.ru/9126d235-cd52-4cec-aade-62d40fe448f4" target="_blank" class="btn-primary" style="display:block; text-decoration:none;">
-        Перейти к оплате
-      </a>
-    </div>
+      <div class="order-preview" id="orderPreviewText"></div>
 
-    <p style="text-align: center; font-size: 13px; margin-bottom: 20px; color: var(--text-muted); font-weight: 300;">После оплаты отправьте заказ менеджеру:</p>
-    
-    <div class="contact-actions">
-      <a href="#" id="tgActionBtn" class="action-btn" target="_blank">✈️ Отправить в Telegram</a>
-      <a href="#" id="vkActionBtn" class="action-btn" target="_blank">💙 Отправить ВКонтакте</a>
+      <div class="contact-actions" style="margin-top: 20px;">
+        <a href="#" id="tgActionBtn" class="action-btn btn-tg" target="_blank">✈️ Отправить в Telegram</a>
+        <a href="#" id="vkActionBtn" class="action-btn btn-vk" target="_blank">💙 Отправить ВКонтакте</a>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
   const tg = window.Telegram.WebApp;
-  if (tg) { tg.expand(); tg.setHeaderColor('#0a0a0a'); tg.setBackgroundColor('#0a0a0a'); }
+  if (tg) { tg.expand(); tg.setHeaderColor('#080405'); tg.setBackgroundColor('#080405'); }
 
+  /* ЛОГИКА СМЕНЫ ТЕМ */
+  const themes = {
+    red: { primary: '#ff1a1a', hover: '#ff4d4d', border: '#330000', glow: 'rgba(255, 26, 26, 0.4)', card: '#150808' },
+    green: { primary: '#00c853', hover: '#69f0ae', border: '#003300', glow: 'rgba(0, 200, 83, 0.4)', card: '#081508' },
+    blue: { primary: '#2979ff', hover: '#5393ff', border: '#001a33', glow: 'rgba(41, 121, 255, 0.4)', card: '#080f15' },
+    purple: { primary: '#aa00ff', hover: '#ce4aff', border: '#1a0033', glow: 'rgba(170, 0, 255, 0.4)', card: '#0f0815' },
+    orange: { primary: '#ff9100', hover: '#ffb74d', border: '#331a00', glow: 'rgba(255, 145, 0, 0.4)', card: '#150f08' }
+  };
+
+  function setTheme(themeName, el) {
+    const t = themes[themeName];
+    document.documentElement.style.setProperty('--primary', t.primary);
+    document.documentElement.style.setProperty('--primary-hover', t.hover);
+    document.documentElement.style.setProperty('--border', t.border);
+    document.documentElement.style.setProperty('--glow', t.glow);
+    document.documentElement.style.setProperty('--card', t.card);
+    
+    document.querySelector('.blob-1').style.background = t.primary;
+    document.querySelector('.blob-3').style.background = t.primary;
+    
+    document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('active'));
+    if(el) el.classList.add('active');
+    
+    localStorage.setItem('theme', themeName);
+  }
+
+  function toggleAnimation() {
+    const toggle = document.getElementById('animToggle');
+    toggle.classList.toggle('active');
+    const isActive = toggle.classList.contains('active');
+    document.documentElement.style.setProperty('--anim-opacity', isActive ? '0.15' : '0');
+    localStorage.setItem('anim', isActive);
+  }
+
+  function changeSpeed(val) {
+    document.documentElement.style.setProperty('--anim-speed', val + 's');
+    localStorage.setItem('speed', val);
+  }
+
+  function toggleSettings() {
+    document.getElementById('settingsPanel').classList.toggle('show');
+  }
+
+  /* Инициализация настроек */
+  const savedTheme = localStorage.getItem('theme');
+  const savedAnim = localStorage.getItem('anim');
+  const savedSpeed = localStorage.getItem('speed');
+
+  if (savedTheme) {
+    setTheme(savedTheme, null);
+    document.querySelectorAll('.color-dot').forEach(dot => {
+      if (dot.style.background === themes[savedTheme].primary || dot.style.backgroundColor === themes[savedTheme].primary) dot.classList.add('active');
+      else dot.classList.remove('active');
+    });
+  }
+  if (savedAnim === 'false') {
+    document.getElementById('animToggle').classList.remove('active');
+    document.documentElement.style.setProperty('--anim-opacity', '0');
+  }
+  if (savedSpeed) {
+    document.getElementById('speedSlider').value = savedSpeed;
+    document.documentElement.style.setProperty('--anim-speed', savedSpeed + 's');
+  }
+
+  /* ТОВАРЫ */
   const PRODUCTS = [
-    { id: 1, category: 'tshirts', name: 'Футболка Oversize', price: 1990, desc: 'Плотный хлопок 240 г/м²', img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80', sizes: ['S', 'M', 'L', 'XL'], badge: 'ХИТ' },
-    { id: 2, category: 'tshirts', name: 'Футболка Classic', price: 1490, desc: '100% хлопок 180 г/м²', img: 'https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=800&q=80', sizes: ['S', 'M', 'L', 'XL', 'XXL'], badge: '' },
-    { id: 3, category: 'hoodies', name: 'Худи с начёсом', price: 3990, desc: 'Тёплое, с капюшоном', img: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&q=80', sizes: ['M', 'L', 'XL'], badge: 'NEW' },
-    { id: 4, category: 'hoodies', name: 'Худи Oversize', price: 3490, desc: 'Дроп-плечо, без начёса', img: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=800&q=80', sizes: ['M', 'L', 'XL'], badge: '' },
-    { id: 5, category: 'sweatshirts', name: 'Свитшот Basic', price: 2990, desc: 'Мягкий футер', img: 'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=800&q=80', sizes: ['S', 'M', 'L', 'XL'], badge: '' },
-    { id: 6, category: 'sweatshirts', name: 'Свитшот Oversize', price: 3290, desc: 'Плотный, широкий крой', img: 'https://images.unsplash.com/photo-1620012253295-c15cc3e65df4?w=800&q=80', sizes: ['M', 'L', 'XL'], badge: '' },
-    { id: 7, category: 'shoes', name: 'Кроссовки Street', price: 5990, desc: 'Массивная подошва', img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80', sizes: ['40', '41', '42', '43', '44'], badge: 'NEW' },
-    { id: 8, category: 'shoes', name: 'Ботинки Worker', price: 7990, desc: 'Рабочие, на толстой подошве', img: 'https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=800&q=80', sizes: ['40', '41', '42', '43', '44', '45'], badge: '' }
+    { id: 1, category: 'tshirts', name: 'Футболка Oversize', price: 1990, desc: 'Плотный хлопок 240 г/м²', img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80', sizes: ['S', 'M', 'L', 'XL', 'XXL'], badge: 'ХИТ' },
+    { id: 2, category: 'tshirts', name: 'Футболка Classic', price: 1490, desc: '100% хлопок 180 г/м²', img: 'https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=600&q=80', sizes: ['S', 'M', 'L', 'XL', 'XXL'], badge: '' },
+    { id: 3, category: 'hoodies', name: 'Худи с начёсом', price: 3990, desc: 'Тёплое, с капюшоном', img: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&q=80', sizes: ['S', 'M', 'L', 'XL', 'XXL'], badge: 'NEW' },
+    { id: 4, category: 'hoodies', name: 'Худи Oversize', price: 3490, desc: 'Дроп-плечо, без начёса', img: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600&q=80', sizes: ['S', 'M', 'L', 'XL', 'XXL'], badge: '' },
+    { id: 5, category: 'sweatshirts', name: 'Свитшот Basic', price: 2990, desc: 'Мягкий футер', img: 'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600&q=80', sizes: ['S', 'M', 'L', 'XL', 'XXL'], badge: '' },
+    { id: 6, category: 'sweatshirts', name: 'Свитшот Oversize', price: 3290, desc: 'Плотный, широкий крой', img: 'https://images.unsplash.com/photo-1620012253295-c15cc3e65df4?w=600&q=80', sizes: ['S', 'M', 'L', 'XL', 'XXL'], badge: '' }
+  ];
+
+  /* ТОВАРЫ ПАРТНЕРОВ (АКСЕССУАРЫ) */
+  const PARTNER_PRODUCTS = [
+    { id: 101, category: 'accessories', name: 'Кепка KU', price: 1500, desc: 'Бейсболка с вышивкой', img: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=600&q=80', sizes: ['ONE SIZE'], badge: '' },
+    { id: 102, category: 'accessories', name: 'Сумка Shopper', price: 2500, desc: 'Хлопковая сумка-шоппер', img: 'https://images.unsplash.com/photo-1594223274512-ad4803739b7c?w=600&q=80', sizes: ['ONE SIZE'], badge: 'NEW' }
   ];
 
   let cart = [];
@@ -369,9 +484,37 @@
           <div class="product-info">
             <h3>${p.name}</h3>
             <p class="desc">${p.desc}</p>
-            <span class="price">${p.price.toLocaleString('ru-RU')} ₽</span>
             <div class="sizes">${sizeBtns}</div>
-            <button class="add-btn" onclick="addToCart(${p.id})">В корзину</button>
+            <div class="product-bottom">
+              <span class="price">${p.price.toLocaleString('ru-RU')} ₽</span>
+              <button class="add-btn" onclick="addToCart(${p.id}, true)">В корзину</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderPartnerProducts() {
+    const grid = document.getElementById('partnersProductsGrid');
+    if(!grid) return;
+    grid.innerHTML = PARTNER_PRODUCTS.map(p => {
+      const sizeBtns = p.sizes.map(s => `<button class="size-btn" onclick="selectSize(${p.id}, '${s}', this)">${s}</button>`).join('');
+      const badge = p.badge ? `<span class="badge">${p.badge}</span>` : '';
+      return `
+        <div class="product-card" data-category="${p.category}">
+          <div class="product-img">
+            <img src="${p.img}" alt="${p.name}" loading="lazy">
+            ${badge}
+          </div>
+          <div class="product-info">
+            <h3>${p.name}</h3>
+            <p class="desc">${p.desc}</p>
+            <div class="sizes">${sizeBtns}</div>
+            <div class="product-bottom">
+              <span class="price">${p.price.toLocaleString('ru-RU')} ₽</span>
+              <button class="add-btn" onclick="addToCart(${p.id}, false)">В корзину</button>
+            </div>
           </div>
         </div>
       `;
@@ -381,8 +524,8 @@
   function filterProducts(category, btn) {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    document.querySelectorAll('.product-card').forEach(card => {
-      card.style.display = (category === 'all' || card.dataset.category === category) ? 'block' : 'none';
+    document.querySelectorAll('#productsGrid .product-card').forEach(card => {
+      card.style.display = (category === 'all' || card.dataset.category === category) ? 'flex' : 'none';
     });
   }
 
@@ -393,8 +536,9 @@
     btn.classList.add('active');
   }
 
-  function addToCart(productId) {
-    const product = PRODUCTS.find(p => p.id === productId);
+  function addToCart(productId, isMainProduct) {
+    const sourceList = isMainProduct ? PRODUCTS : PARTNER_PRODUCTS;
+    const product = sourceList.find(p => p.id === productId);
     const size = selectedSizes[productId];
     if (!size) return alert('Пожалуйста, выберите размер!');
 
@@ -403,6 +547,7 @@
     else cart.push({ id: product.id, name: product.name, price: product.price, size: size, qty: 1 });
 
     updateCartUI();
+    alert('Товар добавлен в корзину!');
   }
 
   function updateCartUI() {
@@ -413,7 +558,7 @@
     let total = 0;
 
     if (cart.length === 0) {
-      cartItemsDiv.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px 0; font-weight: 300;">Ваша корзина пуста</p>';
+      cartItemsDiv.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px 0;">Корзина пуста</p>';
       document.getElementById('cartTotal').innerText = '0 ₽';
       return;
     }
@@ -425,14 +570,21 @@
           <div class="cart-item-info">
             <h4>${item.name}</h4>
             <p>Размер: ${item.size}</p>
+          </div>
+          
+          <div class="cart-item-controls">
             <div class="qty-controls">
               <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
               <span class="qty-val">${item.qty}</span>
               <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
             </div>
-            <button class="remove-btn" onclick="removeFromCart(${index})">Удалить</button>
+            
+            <div class="cart-item-price">${(item.price * item.qty).toLocaleString('ru-RU')} ₽</div>
+            
+            <button class="remove-btn" onclick="removeFromCart(${index})" title="Удалить товар">
+              <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </button>
           </div>
-          <div class="cart-item-price">${(item.price * item.qty).toLocaleString('ru-RU')} ₽</div>
         </div>
       `;
     }).join('');
@@ -469,10 +621,10 @@
       `🛒 *Новый заказ с сайта!*\n\n` +
       `📦 *Товары:*\n${itemsText}\n\n` +
       `💰 *Итого: ${total} ₽*\n\n` +
-      `_Я оплатил(а) заказ. Пожалуйста, уточните данные для доставки (ФИО, телефон, адрес ПВЗ)._`;
+      `_Пожалуйста, уточните данные для доставки (ФИО, телефон, адрес ПВЗ) и пришлите реквизиты для оплаты._`;
 
     document.getElementById('orderPreviewText').innerText = 
-      `Товары:\n${itemsText}\n\nИтого: ${total} ₽`;
+      `📦 Товары:\n${itemsText}\n\n💰 Итого: ${total} ₽`;
 
     const tgLink = `https://t.me/KRAFT_UTOK?text=${encodeURIComponent(orderText)}`;
     document.getElementById('tgActionBtn').href = tgLink;
@@ -485,16 +637,14 @@
   }
 
   function switchTab(tabId, btn) {
-    document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
-    document.getElementById('tab-' + tabId).style.display = 'block';
-    if(btn) {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    if(btn) btn.classList.add('active');
   }
 
   renderProducts();
+  renderPartnerProducts();
   updateCartUI();
 </script>
 </body>
